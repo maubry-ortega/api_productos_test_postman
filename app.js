@@ -15,12 +15,8 @@ app.use(json())
  * cualquier sitio
  * */
 app.use(cors())
-/**
- * configurar el Puero usando el valor que tenga y sino
- * coloca el valor de 3000
- * */
-const PORT = process.env.PORT || 3000
+
 //llamar a las rutas que devuelva router
 app.use('/api/productos', router)
-//poner al servidor a escuchar en el puerto
-app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`))
+
+export default app;
