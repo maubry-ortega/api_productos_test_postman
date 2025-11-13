@@ -22,8 +22,8 @@ Sigue estos pasos para configurar y ejecutar el proyecto en tu entorno local:
 
 1.  **Clona el repositorio** (si está en un control de versiones como Git):
     ```bash
-    git clone <URL-DEL-REPOSITORIO>
-    cd CrudMongoNodeExpress-1
+    git clone https://github.com/maubry-ortega/api_productos_test_postman.git
+    cd api_productos_test_postman
     ```
 
 2.  **Instala las dependencias** del proyecto:
