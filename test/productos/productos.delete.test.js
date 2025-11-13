@@ -1,24 +1,33 @@
 import request from "supertest";
 import app from "../../app.js";
-import mongoose from "mongoose";
-
-// Hook para cerrar la conexión después de todas las pruebas
-afterAll(async () => {
-  await mongoose.connection.close();
-});
 
 describe("DELETE /api/productos/:id", () => {
 
-  test("Debe eliminar un producto y retornar mensaje correcto", async () => {
+  test("Debe crear y eliminar un producto correctamente", async () => {
 
-    const id = global.ID_PRODUCTO_CREADO;
+    const nuevo = {
+      codigo: Math.floor(Math.random() * 999999),
+      nombre: "Producto Temp",
+      precio: 10000,
+      categoria: "Ropa"
+    };
+
+    const creado = await request(app)
+      .post("/api/productos")
+      .send(nuevo);
+
+    const id = creado.body._id;
+
+    expect(creado.statusCode).toBe(201); 
 
     const res = await request(app)
       .delete(`/api/productos/${id}`);
-
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty("mensaje");
     expect(res.body.mensaje).toBe("Producto eliminado");
+
+    const buscar = await request(app).get(`/api/productos/${id}`);
+    expect(buscar.statusCode).toBe(404);
   });
 
 });

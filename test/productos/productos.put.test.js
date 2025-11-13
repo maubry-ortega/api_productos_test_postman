@@ -35,7 +35,6 @@ describe("PUT /api/productos/:id", () => {
     expect(res.body).toHaveProperty("producto");
     expect(res.body.producto.nombre).toBe("Producto Actualizado");
 
-    // 3. Limpieza (eliminar el producto temporal)
     await request(app).delete(`/api/productos/${id}`);
   });
 
