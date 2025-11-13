@@ -1,0 +1,280 @@
+{
+	"info": {
+		"_postman_id": "cf1abf8e-6aa9-4b20-b1c9-5dcc1a696294",
+		"name": "api_productos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50053595",
+		"_collection_link": "https://solosena2025-6250117.postman.co/workspace/solo-sena-2025's-Workspace~281c38a7-932b-48f4-888d-ccfb92dd9958/collection/50053595-cf1abf8e-6aa9-4b20-b1c9-5dcc1a696294?action=share&source=collection_link&creator=50053595"
+	},
+	"item": [
+		{
+			"name": "obtener_productos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Código de estado es 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Respuesta contiene un array\", function () {",
+							"    const json_data = pm.response.json();",
+							"    pm.expect(json_data).to.be.an(\"array\");",
+							"});",
+							"",
+							"pm.test(\"Respuesta objeto de array contiene un campo codigo\", function () {",
+							"    const json_data = pm.response.json();",
+							"    const primer_producto = json_data[0]",
+							"    pm.expect(primer_producto).to.have.property(\"codigo\");",
+							"});",
+							"",
+							"const response_data = pm.response.json();",
+							"const product_count = response_data.length;",
+							"pm.collectionVariables.set(\"CANTIDAD_PRODUCTOS\", product_count);",
+							"",
+							"console.log(`actualizado correctamente CANTIDAD_PRODUCTOS = ${product_count}`);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL_BASE}}",
+					"host": [
+						"{{URL_BASE}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "agregar_producto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Código de estado es 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Respuesta contiene un number\", function () {",
+							"    const json_data = pm.response.json();",
+							"    pm.expect(json_data.precio).to.be.a(\"number\");",
+							"});",
+							"",
+							"if (pm.response.code === 201) {",
+							"    let cantidad_actual = pm.collectionVariables.get(\"CANTIDAD_PRODUCTOS\");",
+							"    ",
+							"    if (!cantidad_actual || isNaN(cantidad_actual)) {",
+							"        cantidad_actual = 0;",
+							"    } else {",
+							"        cantidad_actual = parseInt(cantidad_actual);",
+							"    }",
+							"",
+							"    cantidad_actual += 1;",
+							"",
+							"    pm.collectionVariables.set(\"CANTIDAD_PRODUCTOS\", cantidad_actual);",
+							"    ",
+							"    console.log(`Producto agregado exitosamente. Total: ${cantidad_actual}`);",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"codigo\": 96,\n    \"nombre\": \"Ruana\",\n    \"precio\": 399000,\n    \"categoria\": \"Ropa\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL_BASE}}",
+					"host": [
+						"{{URL_BASE}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtener_producto_por_Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Respuesta contiene campo id\", function () {",
+							"    const json_data = pm.response.json();",
+							"    const id_producto_consulta = pm.collectionVariables.get(\"ID_PRODUCTO\");",
+							"    pm.expect(json_data._id).to.eql(id_producto_consulta);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL_BASE}}{{ID_PRODUCTO}}",
+					"host": [
+						"{{URL_BASE}}{{ID_PRODUCTO}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "eliminar_producto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"producto eliminado\", function () {",
+							"    var json_data = pm.response.json();",
+							"    pm.expect(json_data.mensaje).to.eql(\"Producto eliminado\");",
+							"});",
+							"",
+							"pm.test(\"producto eliminado correctamente\", function () {",
+							"    var json_data = pm.response.json();",
+							"    ",
+							"    if (json_data.mensaje === \"Producto eliminado\") {",
+							"        var current_count = pm.collectionVariables.get(\"CANTIDAD_PRODUCTOS\");",
+							"        ",
+							"        var new_count = parseInt(current_count || 0) - 1;",
+							"        ",
+							"        if (new_count < 0) {",
+							"            new_count = 0;",
+							"        }",
+							"        ",
+							"        pm.collectionVariables.set(\"CANTIDAD_PRODUCTOS\", new_count.toString());",
+							"        ",
+							"        console.log(\"productos actuales \" + current_count + \" nuevos: \" + new_count);",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{URL_BASE}}{{ID_PRODUCTO}}",
+					"host": [
+						"{{URL_BASE}}{{ID_PRODUCTO}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "actualizar_producto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verificar que la respuesta contiene el atributo 'producto' de tipo object\", function () {",
+							"    var json_data = pm.response.json();",
+							"    ",
+							"    pm.expect(json_data).to.have.property('producto');",
+							"",
+							"    pm.expect(json_data.producto).to.be.an('object');",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"codigo\": 96,\n    \"nombre\": \"Camiseta Azul\",\n    \"precio\": 350000,\n    \"categoria\": \"Ropa\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL_BASE}}{{ID_PRODUCTO}}",
+					"host": [
+						"{{URL_BASE}}{{ID_PRODUCTO}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "URL_BASE",
+			"value": ""
+		},
+		{
+			"key": "ID_PRODUCTO",
+			"value": ""
+		},
+		{
+			"key": "CANTIDAD_PRODUCTOS",
+			"value": ""
+		}
+	]
+}
